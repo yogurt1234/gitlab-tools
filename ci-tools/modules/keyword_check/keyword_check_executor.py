@@ -1,3 +1,0 @@
-
-class KeywordCheckExecutor():
-    pass
