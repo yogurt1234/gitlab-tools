@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+      <html lang="ja">
+      <head>
+        <meta charset="UTF-8" />
+        <title>git移行ブログ2.md</title>
+      <style>
+        /*──────────────────────────────────────
+  共通のタイポグラフィ設定をまとめて定義
+──────────────────────────────────────*/
+:host,
+body {
+  font-family:
+    "Noto Sans JP",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    Helvetica,
+    "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN",
+    Arial,
+    "Yu Gothic Medium",
+    "Yu Gothic",
+    YuGothic,
+    Meiryo,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+/*──────────────────────────────────────
+  Shadow DOM／コンポーネント本体のレイアウト
+──────────────────────────────────────*/
+:host {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1000px;
+  min-width: 400px;
+  margin: 0 auto;
+  padding: 1rem;
+  background-color: #fff;
+}
+
+/*──────────────────────────────────────
+  ページ全体（グローバル）レイアウト
+──────────────────────────────────────*/
+body {
+  background-color: #fafafa;
+  max-width: 900px;
+  padding: 2rem;
+  margin: 0 auto;
+}
+
+/*──────────────────────────────────────
+  見出し
+──────────────────────────────────────*/
+:host h1 {
+  font-size: 2rem;
+  margin: 1.5em 0 0.5em;
+  border-bottom: 2px solid #e5e5e5;
+  padding-bottom: 0.3em;
+}
+
+:host h2 {
+  font-size: 1.75rem;
+  margin: 1.4em 0 0.4em;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 0.2em;
+}
+
+:host h3 {
+  font-size: 1.5rem;
+  margin: 1.2em 0 0.3em;
+}
+
+:host h4,
+h5,
+h6 {
+  margin: 1em 0 0.2em;
+}
+
+h1 {
+  font-size: 2.5em;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e5e5;
+  padding-bottom: 0.3em;
+}
+
+h2 {
+  font-size: 2em;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 0.2em;
+}
+
+h3 {
+  font-size: 1.5em;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+}
+
+h4,
+h5,
+h6 {
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+  color: #3e4a59;
+}
+
+/*──────────────────────────────────────
+  本文・リスト
+──────────────────────────────────────*/
+:host p,
+:host ul,
+:host ol {
+  margin: 1em 0;
+}
+
+:host ul,
+:host ol {
+  padding-left: 1.5em;
+}
+
+:host li {
+  margin: 0.5em 0;
+}
+
+p {
+  margin: 1em 0;
+}
+
+ul,
+ol {
+  margin: 1em 0 1em 1.5em;
+}
+
+/*──────────────────────────────────────
+  リンク
+──────────────────────────────────────*/
+:host a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+:host a:hover {
+  text-decoration: underline;
+}
+
+a {
+  color: #3ea0ff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+/*──────────────────────────────────────
+  バッククォート
+──────────────────────────────────────*/
+blockquote {
+  border-left: 4px solid #dfe2e5;
+  background-color: #ffffff;
+  padding: 0.1em 0.1em 0.1em 1em;
+  margin: 0.8em 0;
+  color: #6a737d;
+}
+
+
+/*──────────────────────────────────────
+  コード・プリフォーマット
+──────────────────────────────────────*/
+:host code {
+  font-family: monospace;
+  background: rgba(27, 31, 35, 0.05);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+:host pre {
+  margin: 1em 0 0.5em;
+  overflow-x: auto;
+}
+
+/*──────────────────────────────────────
+  テーブル調整
+──────────────────────────────────────*/
+:host table {
+  width: auto;
+  border-collapse: collapse;
+  margin: 0.3em 0;
+  border-spacing: 0;
+}
+
+:host th,
+:host td {
+  border: 1px solid #dfe2e5;
+  padding: 0.2em 0.5em;
+}
+
+:host th {
+  background: #f6f8fa;
+  text-align: left;
+}
+
+/*──────────────────────────────────────
+  グローバル水平線
+──────────────────────────────────────*/
+hr {
+  border: none;
+  border-top: 1px solid #e1e4e8;
+  margin: 2em 0;
+}
+
+/*──────────────────────────────────────
+  カスタムコンテナ（Shadow DOM用）
+──────────────────────────────────────*/
+:host .note,
+:host .note--warn,
+:host .note--alert {
+  display: flex;
+  align-items: center;
+  padding: 0.5em 1.25em;
+  margin: 1em 0;
+  border-radius: 6px;
+  border-left: 4px solid;
+  font-size: 0.95em;
+  line-height: 1.4;
+  background-color: #fff;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+:host .note {
+  background-color: #e6f4ea;
+  border-left-color: #28a745;
+  color: #155724;
+}
+
+:host .note::before {
+  content: '✔️';
+  flex-shrink: 0;
+  margin-right: 0.75em;
+}
+
+:host .note--warn {
+  background-color: #fff3cd;
+  border-left-color: #ffc107;
+  color: #856404;
+}
+
+:host .note--warn::before {
+  content: '⚠️';
+  flex-shrink: 0;
+  margin-right: 0.75em;
+}
+
+:host .note--alert {
+  background-color: #ffe0e0;
+  border-left-color: #f1a8a8;
+  color: #721c24;
+}
+
+:host .note--alert::before {
+  content: "❌";
+  flex-shrink: 0;
+  margin-right: 0.75em;
+}
+
+
+/*──────────────────────────────────────
+  Note コンテナ共通／アイコン調整（グローバル）
+──────────────────────────────────────*/
+.note,
+.note--warn,
+.note--alert {
+  display: flex;
+  align-items: baseline;
+  padding: 0.5em 1.25em;
+  margin: 1em 0;
+  border-radius: 6px;
+  border-left: 4px solid;
+  font-size: 0.95em;
+  line-height: 1.4;
+  background-color: #fff;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.note::before,
+.note--warn::before,
+.note--alert::before {
+  flex-shrink: 0;
+  margin: 0 0.75em 0 -0.5em;
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+.note {
+  background-color: #e6f4ea;
+  border-left-color: #28a745;
+  color: #155724;
+}
+
+.note::before {
+  content: '✔️';
+}
+
+.note--warn {
+  background-color: #fff3cd;
+  border-left-color: #ffc107;
+  color: #856404;
+}
+
+.note--warn::before {
+  content: '⚠️';
+}
+
+.note--alert {
+  background-color: #f8d7da;
+  border-left-color: #dc3545;
+  color: #721c24;
+}
+
+.note--alert::before {
+  content: '❌';
+}
+
+
+/*──────────────────────────────────────
+  コードブロック（ハイライト込み）
+──────────────────────────────────────*/
+pre.code-block {
+  position: relative;
+  background-color: #2d2d2d;
+  color: #f8f8f2;
+  border-radius: 12px;
+  overflow-x: auto;
+  padding: 2em 1.5em 0.8em;
+  margin: 1em 0.2em 0.5em;
+}
+
+pre.code-block[data-filename=""]::before {
+  display: none;
+}
+
+pre.code-block::before {
+  content: attr(data-filename);
+  position: absolute;
+  top: 0.25em;
+  left: 0.75em;
+  background: #4d4d4d;
+  color: #f0f0f0;
+  font-size: 0.75em;
+  line-height: 1;
+  padding: 0.6em 0.7em;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+pre.code-block[data-filename=""] {
+  padding-top: 0;
+}
+
+pre.code-block code {
+  background: none !important;
+  color: inherit;
+  padding: 0 !important;
+  border: none !important;
+  display: block;
+}
+
+/* ── コードブロックにコピーアイコンを重ねる ── */
+.code-container {
+  position: relative;
+  margin: 1em 0 0.1em;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  cursor: pointer;
+  font-size: 1em;
+  color: #f8f8f2;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.copy-btn.copied {
+  font-size: 0.8em;
+  color: #fff;
+  cursor: default;
+  opacity: 1;
+}
+
+.copy-btn:hover {
+  opacity: 1;
+}
+
+/*──────────────────────────────────────
+  Highlight.js ダークテーマ
+──────────────────────────────────────*/
+/*!
+  Theme: GitHub Dark Dimmed
+  Description: Dark dimmed theme as seen on github.com
+  Author: github.com
+  Maintainer: @Hirse
+  Updated: 2021-05-15
+
+  Colors taken from GitHub's CSS
+*/
+
+.hljs {
+  color: #adbac7;
+  background: #22272e;
+}
+
+.hljs-doctag,
+.hljs-keyword,
+.hljs-meta .hljs-keyword,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-variable.language_ {
+  /* prettylights-syntax-keyword */
+  color: #f47067;
+}
+
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+  /* prettylights-syntax-entity */
+  color: #dcbdfb;
+}
+
+.hljs-attr,
+.hljs-attribute,
+.hljs-literal,
+.hljs-meta,
+.hljs-number,
+.hljs-operator,
+.hljs-variable,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-id {
+  /* prettylights-syntax-constant */
+  color: #6cb6ff;
+}
+
+.hljs-regexp,
+.hljs-string,
+.hljs-meta .hljs-string {
+  /* prettylights-syntax-string */
+  color: #96d0ff;
+}
+
+.hljs-built_in,
+.hljs-symbol {
+  /* prettylights-syntax-variable */
+  color: #f69d50;
+}
+
+.hljs-comment,
+.hljs-code,
+.hljs-formula {
+  /* prettylights-syntax-comment */
+  color: #768390;
+}
+
+.hljs-name,
+.hljs-quote,
+.hljs-selector-tag,
+.hljs-selector-pseudo {
+  /* prettylights-syntax-entity-tag */
+  color: #8ddb8c;
+}
+
+.hljs-subst {
+  /* prettylights-syntax-storage-modifier-import */
+  color: #adbac7;
+}
+
+.hljs-section {
+  /* prettylights-syntax-markup-heading */
+  color: #316dca;
+  font-weight: bold;
+}
+
+.hljs-bullet {
+  /* prettylights-syntax-markup-list */
+  color: #eac55f;
+}
+
+.hljs-emphasis {
+  /* prettylights-syntax-markup-italic */
+  color: #adbac7;
+  font-style: italic;
+}
+
+.hljs-strong {
+  /* prettylights-syntax-markup-bold */
+  color: #adbac7;
+  font-weight: bold;
+}
+
+.hljs-addition {
+  /* prettylights-syntax-markup-inserted */
+  color: #b4f1b4;
+  background-color: #1b4721;
+}
+
+.hljs-deletion {
+  /* prettylights-syntax-markup-deleted */
+  color: #ffd8d3;
+  background-color: #78191b;
+}
+
+.hljs-char.escape_,
+.hljs-link,
+.hljs-params,
+.hljs-property,
+.hljs-punctuation,
+.hljs-tag {
+  /* purposely ignored */
+}
+
+/*──────────────────────────────────────
+  Mermaid 図のスタイル
+──────────────────────────────────────*/
+.mermaid {
+  display: block;
+  margin: 1.5em auto;
+  max-width: 800px;
+  width: 90%;
+  height: auto;
+}
+
+/*──────────────────────────────────────
+  画像の拡大とダウロード
+──────────────────────────────────────*/
+.clickable-image {
+  cursor: zoom-in;
+  transition: transform .2s;
+}
+
+/* モーダル（オーバーレイ）用 */
+.image-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.image-modal img {
+  max-width: 90%;
+  max-height: 80%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  width: min(150%, 90vw);
+}
+
+.image-modal .download-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #aaa;
+  color: #333;
+  padding: .5em 1em;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: .9em;
+}
+
+/* モーダルを開くときに付けるクラス */
+.image-modal.is-visible {
+  display: flex;
+}
+      </style>
+      </head>
+      <body>
+        <article id="blog-root">
+          <template shadowrootmode="open">
+            <style>
+              /*──────────────────────────────────────
+  共通のタイポグラフィ設定をまとめて定義
+──────────────────────────────────────*/
+:host,
+body {
+  font-family:
+    "Noto Sans JP",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Helvetica Neue",
+    Helvetica,
+    "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN",
+    Arial,
+    "Yu Gothic Medium",
+    "Yu Gothic",
+    YuGothic,
+    Meiryo,
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+/*──────────────────────────────────────
+  Shadow DOM／コンポーネント本体のレイアウト
+──────────────────────────────────────*/
+:host {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1000px;
+  min-width: 400px;
+  margin: 0 auto;
+  padding: 1rem;
+  background-color: #fff;
+}
+
+/*──────────────────────────────────────
+  ページ全体（グローバル）レイアウト
+──────────────────────────────────────*/
+body {
+  background-color: #fafafa;
+  max-width: 900px;
+  padding: 2rem;
+  margin: 0 auto;
+}
+
+/*──────────────────────────────────────
+  見出し
+──────────────────────────────────────*/
+:host h1 {
+  font-size: 2rem;
+  margin: 1.5em 0 0.5em;
+  border-bottom: 2px solid #e5e5e5;
+  padding-bottom: 0.3em;
+}
+
+:host h2 {
+  font-size: 1.75rem;
+  margin: 1.4em 0 0.4em;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 0.2em;
+}
+
+:host h3 {
+  font-size: 1.5rem;
+  margin: 1.2em 0 0.3em;
+}
+
+:host h4,
+h5,
+h6 {
+  margin: 1em 0 0.2em;
+}
+
+h1 {
+  font-size: 2.5em;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e5e5;
+  padding-bottom: 0.3em;
+}
+
+h2 {
+  font-size: 2em;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 0.2em;
+}
+
+h3 {
+  font-size: 1.5em;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+}
+
+h4,
+h5,
+h6 {
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+  color: #3e4a59;
+}
+
+/*──────────────────────────────────────
+  本文・リスト
+──────────────────────────────────────*/
+:host p,
+:host ul,
+:host ol {
+  margin: 1em 0;
+}
+
+:host ul,
+:host ol {
+  padding-left: 1.5em;
+}
+
+:host li {
+  margin: 0.5em 0;
+}
+
+p {
+  margin: 1em 0;
+}
+
+ul,
+ol {
+  margin: 1em 0 1em 1.5em;
+}
+
+/*──────────────────────────────────────
+  リンク
+──────────────────────────────────────*/
+:host a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+:host a:hover {
+  text-decoration: underline;
+}
+
+a {
+  color: #3ea0ff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+
+/*──────────────────────────────────────
+  バッククォート
+──────────────────────────────────────*/
+blockquote {
+  border-left: 4px solid #dfe2e5;
+  background-color: #ffffff;
+  padding: 0.1em 0.1em 0.1em 1em;
+  margin: 0.8em 0;
+  color: #6a737d;
+}
+
+
+/*──────────────────────────────────────
+  コード・プリフォーマット
+──────────────────────────────────────*/
+:host code {
+  font-family: monospace;
+  background: rgba(27, 31, 35, 0.05);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+:host pre {
+  margin: 1em 0 0.5em;
+  overflow-x: auto;
+}
+
+/*──────────────────────────────────────
+  テーブル調整
+──────────────────────────────────────*/
+:host table {
+  width: auto;
+  border-collapse: collapse;
+  margin: 0.3em 0;
+  border-spacing: 0;
+}
+
+:host th,
+:host td {
+  border: 1px solid #dfe2e5;
+  padding: 0.2em 0.5em;
+}
+
+:host th {
+  background: #f6f8fa;
+  text-align: left;
+}
+
+/*──────────────────────────────────────
+  グローバル水平線
+──────────────────────────────────────*/
+hr {
+  border: none;
+  border-top: 1px solid #e1e4e8;
+  margin: 2em 0;
+}
+
+/*──────────────────────────────────────
+  カスタムコンテナ（Shadow DOM用）
+──────────────────────────────────────*/
+:host .note,
+:host .note--warn,
+:host .note--alert {
+  display: flex;
+  align-items: center;
+  padding: 0.5em 1.25em;
+  margin: 1em 0;
+  border-radius: 6px;
+  border-left: 4px solid;
+  font-size: 0.95em;
+  line-height: 1.4;
+  background-color: #fff;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+:host .note {
+  background-color: #e6f4ea;
+  border-left-color: #28a745;
+  color: #155724;
+}
+
+:host .note::before {
+  content: '✔️';
+  flex-shrink: 0;
+  margin-right: 0.75em;
+}
+
+:host .note--warn {
+  background-color: #fff3cd;
+  border-left-color: #ffc107;
+  color: #856404;
+}
+
+:host .note--warn::before {
+  content: '⚠️';
+  flex-shrink: 0;
+  margin-right: 0.75em;
+}
+
+:host .note--alert {
+  background-color: #ffe0e0;
+  border-left-color: #f1a8a8;
+  color: #721c24;
+}
+
+:host .note--alert::before {
+  content: "❌";
+  flex-shrink: 0;
+  margin-right: 0.75em;
+}
+
+
+/*──────────────────────────────────────
+  Note コンテナ共通／アイコン調整（グローバル）
+──────────────────────────────────────*/
+.note,
+.note--warn,
+.note--alert {
+  display: flex;
+  align-items: baseline;
+  padding: 0.5em 1.25em;
+  margin: 1em 0;
+  border-radius: 6px;
+  border-left: 4px solid;
+  font-size: 0.95em;
+  line-height: 1.4;
+  background-color: #fff;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.note::before,
+.note--warn::before,
+.note--alert::before {
+  flex-shrink: 0;
+  margin: 0 0.75em 0 -0.5em;
+  font-size: 1.2em;
+  line-height: 1;
+}
+
+.note {
+  background-color: #e6f4ea;
+  border-left-color: #28a745;
+  color: #155724;
+}
+
+.note::before {
+  content: '✔️';
+}
+
+.note--warn {
+  background-color: #fff3cd;
+  border-left-color: #ffc107;
+  color: #856404;
+}
+
+.note--warn::before {
+  content: '⚠️';
+}
+
+.note--alert {
+  background-color: #f8d7da;
+  border-left-color: #dc3545;
+  color: #721c24;
+}
+
+.note--alert::before {
+  content: '❌';
+}
+
+
+/*──────────────────────────────────────
+  コードブロック（ハイライト込み）
+──────────────────────────────────────*/
+pre.code-block {
+  position: relative;
+  background-color: #2d2d2d;
+  color: #f8f8f2;
+  border-radius: 12px;
+  overflow-x: auto;
+  padding: 2em 1.5em 0.8em;
+  margin: 1em 0.2em 0.5em;
+}
+
+pre.code-block[data-filename=""]::before {
+  display: none;
+}
+
+pre.code-block::before {
+  content: attr(data-filename);
+  position: absolute;
+  top: 0.25em;
+  left: 0.75em;
+  background: #4d4d4d;
+  color: #f0f0f0;
+  font-size: 0.75em;
+  line-height: 1;
+  padding: 0.6em 0.7em;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+pre.code-block[data-filename=""] {
+  padding-top: 0;
+}
+
+pre.code-block code {
+  background: none !important;
+  color: inherit;
+  padding: 0 !important;
+  border: none !important;
+  display: block;
+}
+
+/* ── コードブロックにコピーアイコンを重ねる ── */
+.code-container {
+  position: relative;
+  margin: 1em 0 0.1em;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 4px;
+  padding: 0.2em 0.4em;
+  cursor: pointer;
+  font-size: 1em;
+  color: #f8f8f2;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.copy-btn.copied {
+  font-size: 0.8em;
+  color: #fff;
+  cursor: default;
+  opacity: 1;
+}
+
+.copy-btn:hover {
+  opacity: 1;
+}
+
+/*──────────────────────────────────────
+  Highlight.js ダークテーマ
+──────────────────────────────────────*/
+/*!
+  Theme: GitHub Dark Dimmed
+  Description: Dark dimmed theme as seen on github.com
+  Author: github.com
+  Maintainer: @Hirse
+  Updated: 2021-05-15
+
+  Colors taken from GitHub's CSS
+*/
+
+.hljs {
+  color: #adbac7;
+  background: #22272e;
+}
+
+.hljs-doctag,
+.hljs-keyword,
+.hljs-meta .hljs-keyword,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type,
+.hljs-variable.language_ {
+  /* prettylights-syntax-keyword */
+  color: #f47067;
+}
+
+.hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__,
+.hljs-title.function_ {
+  /* prettylights-syntax-entity */
+  color: #dcbdfb;
+}
+
+.hljs-attr,
+.hljs-attribute,
+.hljs-literal,
+.hljs-meta,
+.hljs-number,
+.hljs-operator,
+.hljs-variable,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-selector-id {
+  /* prettylights-syntax-constant */
+  color: #6cb6ff;
+}
+
+.hljs-regexp,
+.hljs-string,
+.hljs-meta .hljs-string {
+  /* prettylights-syntax-string */
+  color: #96d0ff;
+}
+
+.hljs-built_in,
+.hljs-symbol {
+  /* prettylights-syntax-variable */
+  color: #f69d50;
+}
+
+.hljs-comment,
+.hljs-code,
+.hljs-formula {
+  /* prettylights-syntax-comment */
+  color: #768390;
+}
+
+.hljs-name,
+.hljs-quote,
+.hljs-selector-tag,
+.hljs-selector-pseudo {
+  /* prettylights-syntax-entity-tag */
+  color: #8ddb8c;
+}
+
+.hljs-subst {
+  /* prettylights-syntax-storage-modifier-import */
+  color: #adbac7;
+}
+
+.hljs-section {
+  /* prettylights-syntax-markup-heading */
+  color: #316dca;
+  font-weight: bold;
+}
+
+.hljs-bullet {
+  /* prettylights-syntax-markup-list */
+  color: #eac55f;
+}
+
+.hljs-emphasis {
+  /* prettylights-syntax-markup-italic */
+  color: #adbac7;
+  font-style: italic;
+}
+
+.hljs-strong {
+  /* prettylights-syntax-markup-bold */
+  color: #adbac7;
+  font-weight: bold;
+}
+
+.hljs-addition {
+  /* prettylights-syntax-markup-inserted */
+  color: #b4f1b4;
+  background-color: #1b4721;
+}
+
+.hljs-deletion {
+  /* prettylights-syntax-markup-deleted */
+  color: #ffd8d3;
+  background-color: #78191b;
+}
+
+.hljs-char.escape_,
+.hljs-link,
+.hljs-params,
+.hljs-property,
+.hljs-punctuation,
+.hljs-tag {
+  /* purposely ignored */
+}
+
+/*──────────────────────────────────────
+  Mermaid 図のスタイル
+──────────────────────────────────────*/
+.mermaid {
+  display: block;
+  margin: 1.5em auto;
+  max-width: 800px;
+  width: 90%;
+  height: auto;
+}
+
+/*──────────────────────────────────────
+  画像の拡大とダウロード
+──────────────────────────────────────*/
+.clickable-image {
+  cursor: zoom-in;
+  transition: transform .2s;
+}
+
+/* モーダル（オーバーレイ）用 */
+.image-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.image-modal img {
+  max-width: 90%;
+  max-height: 80%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  width: min(150%, 90vw);
+}
+
+.image-modal .download-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: #aaa;
+  color: #333;
+  padding: .5em 1em;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: .9em;
+}
+
+/* モーダルを開くときに付けるクラス */
+.image-modal.is-visible {
+  display: flex;
+}
+            </style>
+            <h2>はじめに</h2>
+<p>前回の記事では、SVNからGit/GitLabへの移行によって得られるメリットや、SVN運用における課題を整理しました。
+今回はその続編として、実際に<strong>Git/GitLabへ移行する際に選択肢となる具体的な手法やツール、そしてその使用上の考慮事項や留意点について詳しく解説します。</strong></p>
+<p>移行にあたっては、SVNの履歴をGit形式に変換するためのツールとして<code>git-svn</code>が広く利用されています。このツールを用いることでSVNリポジトリのコミット履歴を変換し、移行後のGitからも過去の履歴を参照可能とします。</p>
+<h2>移行作業前の準備事項</h2>
+<p>履歴の返還作業前に必要な作業や検討事項を記載します。</p>
+<h3>1. SVNリポジトリレイアウトを確認する</h3>
+<p>移行元のリポジトリレイアウトを把握し、Gitリポジトリの最適な構成を決定します。</p>
+<ul>
+<li>標準レイアウト(trunk／branches／tags)の場合は、<code>git-svn</code>の追加設定不要で移行可能です。</li>
+<li>カスタムレイアウト/モノリポの場合は、パスのマッピング等を決める必要があります。
+併せて、移行後の Git リポジトリ上でどのようなプロジェクト構成（単一リポジトリ vs 複数リポジトリ、グループ階層など）を採用するかを決めます。</li>
+</ul>
+<div class="note"><p>カスタムレイアウトではパス指定の誤りが移行ミスにつながるため、事前の移行検証をお勧めします。</p>
+</div><h3>2. 移行対象の決定</h3>
+<p>リポジトリの規模と操作性を両立させるため、移行対象とするブランチや履歴、ファイルを決めます。</p>
+<ul>
+<li>
+<p><strong>ブランチ／タグ</strong></p>
+<ul>
+<li>更新頻度が低いブランチは、アーカイブ用リポジトリへ移行または除外を検討します。</li>
+<li>リリースを示すタグは、今後のバグ／サポート参照用として最新数個を移行すること等を検討します。</li>
+</ul>
+</li>
+<li>
+<p><strong>ディレクトリ／ファイル</strong></p>
+<ul>
+<li>バイナリファイルは除外し、必要に応じて Git LFS で管理することを検討します。</li>
+<li>Excel／Word などファイルロックが必要なドキュメントは、別途ファイルサーバーや文書管理ツールでの管理を検討します。</li>
+</ul>
+</li>
+<li>
+<p><strong>履歴情報</strong><br>
+大規模リポジトリでは全履歴を移行するとリポジトリサイズが肥大化し、操作性が低下する可能性があります。</p>
+<ul>
+<li>直近数年分の履歴のみを移行することを検討します。</li>
+<li>過去の履歴はアーカイブ用リポジトリに保管することを検討します。</li>
+</ul>
+</li>
+</ul>
+<div class="note"><p>不要データをGitへ取り込むとリポジトリが肥大化し操作性が低下します。
+移行対象の厳選と事前検証をお勧めします。</p>
+</div><h3>3. バイナリファイルの存在有無</h3>
+<p>大容量バイナリファイルや頻繁に更新・参照されるバイナリは Git LFS で管理し、本体リポジトリにはポインタのみを保持します。</p>
+<div class="note note--warn"><p>本体リポジトリで大容量バイナリを管理すると、サイズ増大に伴いクローン／フェッチ速度が著しく低下します。
+プロジェクト要件に応じて最適な運用方法を確立してください。</p>
+</div><h3>4. SVNの外部参照/内部参照の扱いの検討</h3>
+<p>SVN の <code>svn:externals</code> は、別リポジトリや別ディレクトリを参照する仕組みですが、<code>git-svn</code> のデフォルト移行では “プロパティ情報のみ” が取り込まれ、実体ファイルは取得されません。移行後に中身のないディレクトリが残るリスクがあります。そのため、外部参照の場合は同一リポジトリへの統合や別リポジトリ化等を検討してください。内部参照の場合は事前にSVNの<code>svn:externals</code>を解除し実ファイルをコミットする等を検討してください。</p>
+<div class="note"><p>どちらの参照もデフォルト移行では実体を取得できないため、事前に方針を決定し移行手順に組み込むことが重要です。
+外部参照は依存先の更新フロー、内部参照は参照先の正確なパス構造を整理したうえで移行を行う必要があります。</p>
+</div><h3>5. SVNの空フォルダの存在有無</h3>
+<p>Git は空のフォルダを管理対象としないため、SVN上の空フォルダを移行する必要がある場合は、<br>
+<code>.gitkeep</code>ファイルを追加し明示的にコミットします。</p>
+<div class="note"><p>Gitではコミットごとに「Author Name」と「Author Email」を必ず記録します。
+そのためgit-svnで履歴を引き継ぐ際にSVNのユーザ名からGitのユーザ名、メールアドレスへのマッピングが必要になります。</p>
+</div><h2>移行作業</h2>
+<h3>1. オーサー(author)情報の作成</h3>
+<p>git-svnの--authors-file で指定するSVN ユーザー名と Git の氏名・メールアドレスを対応表を作成します。
+以下にマッピング用のauthors.txtを作成するスクリプトを記載します。</p>
+<details><summary>サンプルコード</summary>
+
+      <div class="code-container">
+        <button class="copy-btn" title="コードをコピー">🗐</button>
+        <pre class="code-block" data-filename="powershell"><code class="language-powershell hljs"><span class="hljs-keyword">param</span>(
+    [<span class="hljs-type">Parameter</span>(<span class="hljs-type">Mandatory</span>=<span class="hljs-variable">$true</span>)][<span class="hljs-built_in">string</span>]<span class="hljs-variable">$svnUrl</span>,
+    [<span class="hljs-type">Parameter</span>(<span class="hljs-type">Mandatory</span>=<span class="hljs-variable">$true</span>)][<span class="hljs-built_in">string</span>]<span class="hljs-variable">$domain</span>,
+    [<span class="hljs-built_in">string</span>]<span class="hljs-variable">$output</span> = <span class="hljs-string">&quot;authors.txt&quot;</span>
+)
+svn log <span class="hljs-variable">$svnUrl</span> <span class="hljs-literal">--quiet</span> |
+  ?{<span class="hljs-variable">$_</span> <span class="hljs-operator">-match</span> <span class="hljs-string">&#x27;^r\d+\s*\|\s*([^|]+)\s*\|&#x27;</span>} |
+  %{<span class="hljs-variable">$m</span>=<span class="hljs-variable">$matches</span>[<span class="hljs-number">1</span>].Trim(); <span class="hljs-string">&quot;<span class="hljs-variable">$m</span> = <span class="hljs-variable">$m</span> &lt;<span class="hljs-variable">$m</span>@<span class="hljs-variable">$domain</span>&gt;&quot;</span>} |
+  <span class="hljs-built_in">sort</span> <span class="hljs-literal">-Unique</span> |
+  <span class="hljs-built_in">Out-File</span> authors.txt <span class="hljs-literal">-Encoding</span> utf8NoBOM
+</code></pre></div></details>
+<h3>2. git-svn を使った履歴インポート</h3>
+<ul>
+<li>git-svnの使い方</li>
+<li>カスタムレイアウトの対応</li>
+</ul>
+<h3>3.変換後リポジトリの検証</h3>
+<ul>
+<li>コミット数、履歴整合性チェック</li>
+<li>ファイルハッシュ突合</li>
+<li>ブランチタグの確認</li>
+</ul>
+<h3>4. .gitignore と Git LFS の設定</h3>
+<ul>
+<li>.gitignore作成ポイント</li>
+<li>git LFS運用方針</li>
+</ul>
+<h3>5. リポジトリ最適化と履歴クリーンアップ</h3>
+<ul>
+<li>git gc/git repack：不要オブジェクトの削除</li>
+</ul>
+<h3>6. 初回プッシュ</h3>
+<ul>
+<li>初回プッシュ手順</li>
+</ul>
+<h3>7. 運用前チェック</h3>
+<ul>
+<li>ビルドスクリプト改修,CI/CD整備,運用方針の周知</li>
+</ul>
+<details><summary>サンプルコード</summary>
+
+      <div class="code-container">
+        <button class="copy-btn" title="コードをコピー">🗐</button>
+        <pre class="code-block" data-filename="powershell"><code class="language-powershell hljs"><span class="hljs-keyword">param</span>(
+    [<span class="hljs-type">Parameter</span>(<span class="hljs-type">Mandatory</span> = <span class="hljs-variable">$true</span>)][<span class="hljs-built_in">string</span>]<span class="hljs-variable">$Folder1</span>,
+    [<span class="hljs-type">Parameter</span>(<span class="hljs-type">Mandatory</span> = <span class="hljs-variable">$true</span>)][<span class="hljs-built_in">string</span>]<span class="hljs-variable">$Folder2</span>
+)
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Get-FolderHashes</span></span> {
+    <span class="hljs-function">[<span class="hljs-type">CmdletBinding</span>()]</span>
+    <span class="hljs-keyword">param</span>(
+        [<span class="hljs-type">Parameter</span>(<span class="hljs-type">Mandatory</span>)][<span class="hljs-built_in">string</span>]<span class="hljs-variable">$RootPath</span>
+    )
+    <span class="hljs-built_in">ls</span> <span class="hljs-variable">$RootPath</span> <span class="hljs-literal">-Recurse</span> <span class="hljs-operator">-File</span> |
+      ? { <span class="hljs-variable">$_</span>.FullName <span class="hljs-operator">-notmatch</span> <span class="hljs-string">&#x27;\\\.git(\\|$)&#x27;</span> <span class="hljs-operator">-and</span> <span class="hljs-variable">$_</span>.FullName <span class="hljs-operator">-notmatch</span> <span class="hljs-string">&#x27;\\\.svn(\\|$)&#x27;</span> } |
+      % {
+          <span class="hljs-variable">$relative</span> = [<span class="hljs-type">System.IO.Path</span>]::GetRelativePath(<span class="hljs-variable">$RootPath</span>, <span class="hljs-variable">$_</span>.FullName)
+          <span class="hljs-variable">$hash</span>     = (<span class="hljs-built_in">Get-FileHash</span> <span class="hljs-variable">$_</span>.FullName <span class="hljs-literal">-Algorithm</span> SHA256).Hash
+          [<span class="hljs-type">PSCustomObject</span>]<span class="hljs-selector-tag">@</span>{
+              FilePath = <span class="hljs-variable">$relative</span>
+              Hash     = <span class="hljs-variable">$hash</span>
+          }
+      }
+}
+
+<span class="hljs-comment"># 各フォルダのハッシュを突合して表示</span>
+<span class="hljs-variable">$hashes1</span> = <span class="hljs-built_in">Get-FolderHashes</span> <span class="hljs-literal">-RootPath</span> <span class="hljs-variable">$Folder1</span>
+<span class="hljs-variable">$hashes2</span> = <span class="hljs-built_in">Get-FolderHashes</span> <span class="hljs-literal">-RootPath</span> <span class="hljs-variable">$Folder2</span>
+<span class="hljs-variable">$diffs</span> = <span class="hljs-built_in">Compare-Object</span> <span class="hljs-literal">-ReferenceObject</span> <span class="hljs-variable">$hashes1</span> `
+                       <span class="hljs-literal">-DifferenceObject</span> <span class="hljs-variable">$hashes2</span> `
+                       <span class="hljs-literal">-Property</span> FilePath,Hash
+
+<span class="hljs-keyword">if</span> (<span class="hljs-variable">$diffs</span>) {
+    <span class="hljs-variable">$diffs</span> |
+      <span class="hljs-built_in">Select-Object</span> `
+        <span class="hljs-selector-tag">@</span>{Name=<span class="hljs-string">&#x27;Status&#x27;</span>;Expression={ `
+        <span class="hljs-keyword">if</span> (<span class="hljs-variable">$_</span>.SideIndicator <span class="hljs-operator">-eq</span> <span class="hljs-string">&#x27;&lt;=&#x27;</span>) { <span class="hljs-string">&quot;Only in <span class="hljs-variable">$</span>(Split-Path <span class="hljs-variable">$Folder1</span> -Leaf)&quot;</span> } `
+        <span class="hljs-keyword">else</span> { <span class="hljs-string">&quot;Only in <span class="hljs-variable">$</span>(Split-Path <span class="hljs-variable">$Folder2</span> -Leaf)&quot;</span> } }}, FilePath,Hash | <span class="hljs-built_in">Format-Table</span> <span class="hljs-literal">-AutoSize</span>
+}
+<span class="hljs-keyword">else</span> {
+    <span class="hljs-built_in">Write-Host</span> <span class="hljs-string">&quot;両フォルダの内容は完全に一致しています。&quot;</span> <span class="hljs-literal">-ForegroundColor</span> Green
+}
+</code></pre></div><details>
+<h2>まとめ</h2>
+<p>本記事では、履歴変換に広く使われている <code>git-svn</code>、および履歴の整理やリポジトリの最適化に活用できる <code>git-filter-repo</code> を取り上げ、それぞれの基本的な活用方法と注意点について解説しました。
+本記事が、Gitへの円滑な移行とより良い開発体制の構築に向けた一助となれば幸いです。</p>
+
+          </template>
+      </article>
+      <!-- 画像拡大モーダル -->
+      <div class="image-modal" id="image-modal">
+        <a class="download-btn" id="download-btn" download>ダウンロード</a>
+        <img id="modal-img" src="" alt="拡大画像">
+      </div>
+
+  <script>
+    // 1) クリップボードコピー関数（モダン＆フォールバック両対応）
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.top = '-9999px';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand('copy');
+        return Promise.resolve();
+      } catch (e) {
+        return Promise.reject(e);
+      } finally {
+        document.body.removeChild(ta);
+      }
+    }
+
+    // 2) シャドウルート内外を問わずコピーアイコンを検出できるように
+    const host = document.querySelector('#blog-root');
+    const root = host.shadowRoot || document;
+    root.addEventListener('click', e => {
+      const btn = e.composedPath().find(el =>
+        el instanceof Element && el.classList.contains('copy-btn')
+      );
+      if (!btn) return;
+      const codeEl = btn.parentElement.querySelector('code');
+      copyToClipboard(codeEl.innerText)
+        .then(() => {
+          btn.textContent = '✓ コピーしました';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.innerHTML = '🗐';
+          }, 2000);
+        })
+        .catch(() => {
+          btn.textContent = 'コピー失敗';
+          setTimeout(() => btn.innerHTML = '🗐', 2000);
+        });
+    });
+
+    <!-- クリック→拡大・ダウンロード機能 -->
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1) Shadow DOM があるかチェック、なければ document を使う
+      const host = document.querySelector('#blog-root');
+      const root = (host && host.shadowRoot) ? host.shadowRoot : document;
+      const modal = document.getElementById('image-modal');
+      const modalImg = document.getElementById('modal-img');
+      const downloadBtn = document.getElementById('download-btn');
+
+      // 2) 画像要素にバインド
+      root.querySelectorAll('img').forEach(img => {
+        img.classList.add('clickable-image');
+        img.addEventListener('click', () => {
+          modal.classList.add('is-visible');
+          modalImg.src = img.src;
+          downloadBtn.href = img.src;
+        });
+      });
+
+     modal.addEventListener('click', e => {
+       if (e.target === modal) {
+         modal.classList.remove('is-visible');
+       }
+    });
+    });
+    </script>
+  </body>
+  </html>
